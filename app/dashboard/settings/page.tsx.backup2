@@ -1,0 +1,302 @@
+'use client';
+import { useState } from 'react';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ConnectionManager } from '@/components/dashboard/ConnectionManager';
+import { showToast } from '@/components/Toast';
+import { User, Lock, CreditCard, Bell, Zap, Plus, Trash2, Copy, Download } from 'lucide-react';
+
+export default function SettingsPage() {
+  const [activeTab, setActiveTab] = useState('profile');
+  const [apiKeys, setApiKeys] = useState([
+    { id: '1', name: 'Production Key', key: 'sk_live_***', created: '2024-11-01' },
+    { id: '2', name: 'Development Key', key: 'sk_test_***', created: '2024-11-15' },
+  ]);
+
+  const tabs = [
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'billing', label: 'Billing', icon: CreditCard },
+    { id: 'integrations', label: 'Integrations', icon: Zap },
+    { id: 'security', label: 'Security', icon: Lock },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
+  ];
+
+  const deleteApiKey = (id: string) => {
+    setApiKeys(apiKeys.filter((k) => k.id !== id));
+  };
+
+  return (
+    <DashboardLayout activeTab="settings">
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold">Settings</h1>
+          <p className="text-gray-600 mt-1">Manage your account, billing, and integrations</p>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-2 border-b border-gray-200 overflow-x-auto">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? 'border-black text-black'
+                    : 'border-transparent text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Profile Tab */}
+        {activeTab === 'profile' && (
+          <div className="space-y-6">
+            <Card className="p-6">
+              <h2 className="text-xl font-bold mb-6">Profile Information</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    defaultValue="John Doe"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Email</label>
+                  <input
+                    type="email"
+                    defaultValue="john@example.com"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Company</label>
+                  <input
+                    type="text"
+                    defaultValue="Acme Inc"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <Button className="bg-black hover:bg-gray-800 text-white">Save Changes</Button>
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <h2 className="text-xl font-bold mb-6">Team Members</h2>
+              <div className="space-y-3 mb-6">
+                <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <div>
+                    <p className="font-semibold">John Doe</p>
+                    <p className="text-sm text-gray-600">Admin</p>
+                  </div>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Active</span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <div>
+                    <p className="font-semibold">Jane Smith</p>
+                    <p className="text-sm text-gray-600">Marketer</p>
+                  </div>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Active</span>
+                </div>
+              </div>
+              <Button className="bg-black hover:bg-gray-800 text-white flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Invite Team Member
+              </Button>
+            </Card>
+          </div>
+        )}
+
+        {/* Billing Tab */}
+        {activeTab === 'billing' && (
+          <div className="space-y-6">
+            <Card className="p-6">
+              <h2 className="text-xl font-bold mb-6">Current Plan</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-sm text-gray-600">Plan</p>
+                  <p className="text-2xl font-bold text-blue-600">Professional</p>
+                </div>
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-sm text-gray-600">Billing Cycle</p>
+                  <p className="text-2xl font-bold">Monthly</p>
+                </div>
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-sm text-gray-600">Monthly Cost</p>
+                  <p className="text-2xl font-bold">$299</p>
+                </div>
+              </div>
+
+              <div className="mb-6 p-4 bg-gray-50 rounded">
+                <p className="text-sm font-semibold mb-2">Plan Features</p>
+                <ul className="space-y-1 text-sm text-gray-600">
+                  <li>✓ Unlimited ad accounts</li>
+                  <li>✓ Advanced analytics</li>
+                  <li>✓ AI recommendations</li>
+                  <li>✓ 5 team members</li>
+                  <li>✓ 90-day data retention</li>
+                </ul>
+              </div>
+
+              <div className="flex gap-3">
+                <Button className="flex-1 bg-black hover:bg-gray-800 text-white">Upgrade Plan</Button>
+                <Button className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900">Downgrade</Button>
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <h2 className="text-xl font-bold mb-6">Billing History</h2>
+              <div className="space-y-2">
+                {[
+                  { date: 'Dec 1, 2024', amount: '$299', status: 'Paid' },
+                  { date: 'Nov 1, 2024', amount: '$299', status: 'Paid' },
+                  { date: 'Oct 1, 2024', amount: '$299', status: 'Paid' },
+                ].map((invoice, idx) => (
+                  <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                    <div>
+                      <p className="font-semibold text-sm">{invoice.date}</p>
+                      <p className="text-xs text-gray-600">{invoice.amount}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">{invoice.status}</span>
+                      <button className="p-1 hover:bg-gray-200 rounded">
+                        <Download className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* Integrations Tab */}
+        {activeTab === 'integrations' && (
+          <div className="space-y-6">
+            <Card className="p-6">
+              <h2 className="text-xl font-bold mb-6">Connected Platforms</h2>
+              <div className="space-y-3">
+                {[
+                  { name: 'Meta Ads', status: 'Connected', icon: '📘' },
+                  { name: 'Google Ads', status: 'Connected', icon: '🔍' },
+                  { name: 'Shopify', status: 'Connected', icon: '🛍️' },
+                  { name: 'LinkedIn', status: 'Not Connected', icon: '💼' },
+                ].map((platform) => (
+                  <div key={platform.name} className="flex justify-between items-center p-4 bg-gray-50 rounded">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{platform.icon}</span>
+                      <div>
+                        <p className="font-semibold">{platform.name}</p>
+                        <p className="text-xs text-gray-600">{platform.status}</p>
+                      </div>
+                    </div>
+                    <Button className="bg-black hover:bg-gray-800 text-white text-sm">
+                      {platform.status === 'Connected' ? 'Reconnect' : 'Connect'}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <h2 className="text-xl font-bold mb-6">API Keys</h2>
+              <div className="space-y-3 mb-6">
+                {apiKeys.map((key) => (
+                  <div key={key.id} className="flex justify-between items-center p-4 bg-gray-50 rounded">
+                    <div>
+                      <p className="font-semibold text-sm">{key.name}</p>
+                      <p className="text-xs text-gray-600">Created {key.created}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="p-2 hover:bg-gray-200 rounded" title="Copy">
+                        <Copy className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => deleteApiKey(key.id)}
+                        className="p-2 hover:bg-red-100 rounded text-red-600"
+                        title="Delete"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Button className="bg-black hover:bg-gray-800 text-white flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Generate New Key
+              </Button>
+            </Card>
+          </div>
+        )}
+
+        {/* Security Tab */}
+        {activeTab === 'security' && (
+          <div className="space-y-6">
+            <Card className="p-6">
+              <h2 className="text-xl font-bold mb-6">Password</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Current Password</label>
+                  <input type="password" className="w-full px-4 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">New Password</label>
+                  <input type="password" className="w-full px-4 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Confirm Password</label>
+                  <input type="password" className="w-full px-4 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <Button className="bg-black hover:bg-gray-800 text-white">Update Password</Button>
+              </div>
+            </Card>
+
+            <Card className="p-6 bg-red-50 border border-red-200">
+              <h2 className="text-xl font-bold mb-4 text-red-900">Danger Zone</h2>
+              <p className="text-sm text-red-800 mb-4">
+                Deleting your account is permanent and cannot be undone. All your data will be lost.
+              </p>
+              <Button className="bg-red-600 hover:bg-red-700 text-white">Delete Account</Button>
+            </Card>
+          </div>
+        )}
+
+        {/* Notifications Tab */}
+        {activeTab === 'notifications' && (
+          <div className="space-y-6">
+            <Card className="p-6">
+              <h2 className="text-xl font-bold mb-6">Notification Preferences</h2>
+              <div className="space-y-4">
+                {[
+                  { label: 'Email Alerts', desc: 'Get notified about campaign performance' },
+                  { label: 'Weekly Reports', desc: 'Receive weekly performance summaries' },
+                  { label: 'AI Recommendations', desc: 'Get AI-powered optimization suggestions' },
+                  { label: 'Team Invitations', desc: 'Notify when team members join' },
+                ].map((notif) => (
+                  <div key={notif.label} className="flex items-center justify-between p-4 bg-gray-50 rounded">
+                    <div>
+                      <p className="font-semibold text-sm">{notif.label}</p>
+                      <p className="text-xs text-gray-600">{notif.desc}</p>
+                    </div>
+                    <input type="checkbox" defaultChecked className="h-4 w-4" />
+                  </div>
+                ))}
+              </div>
+              <Button className="mt-6 bg-black hover:bg-gray-800 text-white">Save Preferences</Button>
+            </Card>
+          </div>
+        )}
+      </div>
+    </DashboardLayout>
+  );
+}

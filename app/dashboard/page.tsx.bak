@@ -1,0 +1,1374 @@
+"use client"
+
+import type React from "react"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import {
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
+  LineChart,
+  Line,
+} from "recharts"
+import {
+  LayoutDashboard,
+  TrendingUp,
+  Zap,
+  Settings,
+  Bell,
+  Search,
+  Home,
+  ChevronDown,
+  ArrowUpRight,
+  ArrowDownRight,
+  Target,
+  DollarSign,
+  MousePointer,
+  MoreHorizontal,
+  Calendar,
+  Download,
+  Sparkles,
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  Plus,
+  BarChart3,
+  Filter,
+  Eye,
+  Play,
+  Pause,
+  X,
+  Wand2,
+  Send,
+  ImageIcon,
+  FileText,
+} from "lucide-react"
+import { supabase } from "@/lib/supabaseClient"
+
+const integrations = [
+  {
+    name: "Meta Ads",
+    logo: "/images/image.png",
+    key: "meta",
+  },
+  {
+    name: "Google Ads",
+    logo: "/images/image.png",
+    key: "google",
+  },
+  {
+    name: "Shopify",
+    logo: "/images/image.png",
+    key: "shopify",
+  },
+  {
+    name: "LinkedIn",
+    logo: "/images/image.png",
+    key: "linkedin",
+  },
+]
+
+export default function DashboardPage() {
+  const [activeTab, setActiveTab] = useState("overview")
+  const [dateRange, setDateRange] = useState("Last 30 days")
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  // Placeholder for future Supabase-backed data fetch.
+  // In the 5–6 day prototype we can progressively replace the static arrays
+  // below with data from `campaigns` and `metric_snapshots`.
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true)
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+        console.log("Supabase session (for future workspace scoping):", session?.user?.id)
+        // Example future calls (commented out for now):
+        // const { data: campaigns } = await supabase
+        //   .from("campaigns")
+        //   .select("*")
+        //   .limit(10)
+        // setRecentCampaigns(campaigns ?? [])
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    void loadData()
+  }, [])
+
+  const performanceData = [
+    { month: "Jan", metaAds: 4200, googleAds: 3800, shopify: 2400, linkedin: 1200 },
+    { month: "Feb", metaAds: 4800, googleAds: 4200, shopify: 2800, linkedin: 1400 },
+    { month: "Mar", metaAds: 5200, googleAds: 4600, shopify: 3200, linkedin: 1600 },
+    { month: "Apr", metaAds: 4900, googleAds: 5100, shopify: 3500, linkedin: 1800 },
+    { month: "May", metaAds: 5800, googleAds: 5400, shopify: 4100, linkedin: 2000 },
+    { month: "Jun", metaAds: 6200, googleAds: 5800, shopify: 4600, linkedin: 2200 },
+    { month: "Jul", metaAds: 6800, googleAds: 6200, shopify: 5200, linkedin: 2400 },
+  ]
+
+  const trendData = [
+    { day: "Mon", value: 4200, spend: 1200 },
+    { day: "Tue", value: 4800, spend: 1400 },
+    { day: "Wed", value: 4600, spend: 1300 },
+    { day: "Thu", value: 5200, spend: 1500 },
+    { day: "Fri", value: 5800, spend: 1700 },
+    { day: "Sat", value: 5400, spend: 1600 },
+    { day: "Sun", value: 6200, spend: 1800 },
+  ]
+
+  const channelData = [
+    { name: "Meta Ads", value: 35, color: "#f97316", revenue: "$34,450" },
+    { name: "Google Ads", value: 30, color: "#10b981", revenue: "$29,520" },
+    { name: "Shopify", value: 20, color: "#8b5cf6", revenue: "$19,680" },
+    { name: "LinkedIn", value: 15, color: "#3b82f6", revenue: "$14,770" },
+  ]
+
+  const recentCampaigns = [
+    {
+      id: 1,
+      name: "Summer Sale 2025",
+      channel: "Meta Ads",
+      status: "active",
+      spend: "$2,450",
+      roas: "3.2x",
+      trend: "up",
+      impressions: "124.5K",
+      clicks: "8.2K",
+    },
+    {
+      id: 2,
+      name: "Brand Awareness Q2",
+      channel: "Google Ads",
+      status: "active",
+      spend: "$1,890",
+      roas: "2.8x",
+      trend: "up",
+      impressions: "89.3K",
+      clicks: "5.4K",
+    },
+    {
+      id: 3,
+      name: "Product Launch",
+      channel: "LinkedIn",
+      status: "paused",
+      spend: "$890",
+      roas: "1.9x",
+      trend: "down",
+      impressions: "45.2K",
+      clicks: "2.1K",
+    },
+    {
+      id: 4,
+      name: "Retargeting Flow",
+      channel: "Meta Ads",
+      status: "active",
+      spend: "$1,200",
+      roas: "4.1x",
+      trend: "up",
+      impressions: "67.8K",
+      clicks: "4.9K",
+    },
+    {
+      id: 5,
+      name: "Holiday Promo",
+      channel: "Shopify",
+      status: "scheduled",
+      spend: "$0",
+      roas: "-",
+      trend: "neutral",
+      impressions: "-",
+      clicks: "-",
+    },
+  ]
+
+  const aiInsights = [
+    {
+      type: "success",
+      title: "High Performance Alert",
+      message: "Meta Ads campaign 'Summer Sale' is outperforming by 24%. Consider increasing budget by $500.",
+      time: "2h ago",
+      action: "Increase Budget",
+    },
+    {
+      type: "warning",
+      title: "Cost Alert",
+      message: "Google Ads CPC increased 15% in the last week. Review keyword bids to optimize spend.",
+      time: "5h ago",
+      action: "Review Bids",
+    },
+    {
+      type: "info",
+      title: "Timing Insight",
+      message: "Best performing day for conversions: Tuesday. Schedule high-impact campaigns accordingly.",
+      time: "1d ago",
+      action: "Schedule Campaign",
+    },
+  ]
+
+  const topProducts = [
+    { name: "Premium Headphones", revenue: "$12,450", orders: 142, growth: "+18%", sku: "PH-001" },
+    { name: "Wireless Earbuds", revenue: "$8,920", orders: 238, growth: "+24%", sku: "WE-002" },
+    { name: "Smart Watch Pro", revenue: "$6,780", orders: 89, growth: "+12%", sku: "SW-003" },
+    { name: "Bluetooth Speaker", revenue: "$4,560", orders: 156, growth: "+8%", sku: "BS-004" },
+  ]
+
+  const notifications = [
+    {
+      title: "Campaign budget depleted",
+      message: "Summer Sale 2025 has reached its daily budget",
+      time: "5m ago",
+      type: "warning",
+    },
+    {
+      title: "New milestone reached",
+      message: "You've hit 1000 conversions this month!",
+      time: "1h ago",
+      type: "success",
+    },
+    { title: "Weekly report ready", message: "Your performance report is ready to view", time: "3h ago", type: "info" },
+  ]
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "analytics":
+        return <AnalyticsView performanceData={performanceData} trendData={trendData} channelData={channelData} />
+      case "campaigns":
+        return <CampaignsView campaigns={recentCampaigns} />
+      case "copilot":
+        return <CopilotView insights={aiInsights} />
+      case "generator":
+        return <AdGeneratorView />
+      case "meta":
+      case "google":
+      case "shopify":
+      case "linkedin":
+        return <ChannelView channel={activeTab} />
+      case "automations":
+        return <AutomationsView />
+      case "reports":
+        return <ReportsView />
+      case "settings":
+        return <SettingsView />
+      default:
+        return (
+          <OverviewContent
+            performanceData={performanceData}
+            channelData={channelData}
+            recentCampaigns={recentCampaigns}
+            topProducts={topProducts}
+            aiInsights={aiInsights}
+            trendData={trendData}
+          />
+        )
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="border-b border-[#18181b]/5 bg-white sticky top-0 z-40">
+        <div className="px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="w-9 h-9 bg-[#f97316] rounded-xl flex items-center justify-center">
+                <Zap className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-semibold text-[#18181b] hidden sm:inline text-lg">GROWZZY OS</span>
+            </Link>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center bg-[#f4f4f5] rounded-xl px-4 py-2.5 gap-2 w-72 border border-transparent focus-within:border-[#f97316]/20 focus-within:bg-white transition-all">
+              <Search className="w-4 h-4 text-[#18181b]/40" />
+              <input
+                type="text"
+                placeholder="Search campaigns, metrics..."
+                className="bg-transparent border-0 outline-0 text-sm w-full text-[#18181b] placeholder-[#18181b]/40"
+              />
+              <kbd className="hidden lg:inline-flex h-5 items-center gap-1 rounded border border-[#18181b]/10 bg-white px-1.5 font-mono text-[10px] font-medium text-[#18181b]/50">
+                /
+              </kbd>
+            </div>
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="p-2.5 hover:bg-[#f4f4f5] rounded-xl transition-colors relative"
+              >
+                <Bell className="w-5 h-5 text-[#18181b]/60" />
+                <span className="absolute top-2 right-2 w-2 h-2 bg-[#f97316] rounded-full" />
+              </button>
+              {showNotifications && (
+                <div className="absolute right-0 top-12 w-80 bg-white rounded-xl border border-[#18181b]/10 shadow-xl z-50">
+                  <div className="p-4 border-b border-[#18181b]/5 flex items-center justify-between">
+                    <h3 className="font-medium text-[#18181b]">Notifications</h3>
+                    <button onClick={() => setShowNotifications(false)}>
+                      <X className="w-4 h-4 text-[#18181b]/40" />
+                    </button>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    {notifications.map((notif, idx) => (
+                      <div
+                        key={idx}
+                        className="p-4 border-b border-[#18181b]/5 last:border-0 hover:bg-[#f4f4f5] transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div
+                            className={`w-2 h-2 rounded-full mt-2 ${notif.type === "warning" ? "bg-amber-500" : notif.type === "success" ? "bg-emerald-500" : "bg-blue-500"}`}
+                          />
+                          <div>
+                            <p className="text-sm font-medium text-[#18181b]">{notif.title}</p>
+                            <p className="text-xs text-[#18181b]/60 mt-0.5">{notif.message}</p>
+                            <p className="text-xs text-[#18181b]/40 mt-1">{notif.time}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <button className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#f97316] to-[#ea580c] flex items-center justify-center text-white font-medium text-sm">
+              JD
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="flex">
+        {/* Sidebar */}
+        <aside className="w-64 border-r border-[#18181b]/5 bg-[#fafafa] h-[calc(100vh-73px)] overflow-y-auto hidden md:block sticky top-[73px]">
+          <div className="p-4">
+            {/* Workspace Selector */}
+            <button className="w-full flex items-center gap-3 p-3 rounded-xl bg-[#f97316] text-white mb-6 hover:bg-[#ea580c] transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-sm font-medium">
+                G
+              </div>
+              <span className="text-sm font-medium flex-1 text-left">GROWZZY Demo</span>
+              <ChevronDown className="w-4 h-4 opacity-60" />
+            </button>
+
+            <nav className="space-y-1">
+              <SidebarItem
+                icon={<LayoutDashboard className="w-[18px] h-[18px]" />}
+                label="Dashboard"
+                active={activeTab === "overview"}
+                onClick={() => setActiveTab("overview")}
+              />
+              <SidebarItem
+                icon={<BarChart3 className="w-[18px] h-[18px]" />}
+                label="Analytics"
+                active={activeTab === "analytics"}
+                onClick={() => setActiveTab("analytics")}
+              />
+              <SidebarItem
+                icon={<Target className="w-[18px] h-[18px]" />}
+                label="Campaigns"
+                active={activeTab === "campaigns"}
+                onClick={() => setActiveTab("campaigns")}
+                badge="12"
+              />
+
+              <div className="pt-6 pb-2">
+                <p className="text-xs font-medium text-[#18181b]/40 px-3 uppercase tracking-wider">Channels</p>
+              </div>
+
+              {integrations.map((integration) => (
+                <SidebarItem
+                  key={integration.key}
+                  icon={
+                    <Image
+                      src={integration.logo || "/placeholder.svg"}
+                      alt={integration.name}
+                      width={18}
+                      height={18}
+                      className="rounded"
+                    />
+                  }
+                  label={integration.name}
+                  active={activeTab === integration.key}
+                  onClick={() => setActiveTab(integration.key)}
+                />
+              ))}
+
+              <div className="pt-6 pb-2">
+                <p className="text-xs font-medium text-[#18181b]/40 px-3 uppercase tracking-wider">AI Tools</p>
+              </div>
+
+              <SidebarItem
+                icon={<Sparkles className="w-[18px] h-[18px]" />}
+                label="AI Co-Pilot"
+                active={activeTab === "copilot"}
+                onClick={() => setActiveTab("copilot")}
+                badge="New"
+                badgeColor="bg-[#f97316]"
+              />
+              <SidebarItem
+                icon={<Wand2 className="w-[18px] h-[18px]" />}
+                label="Ad Generator"
+                active={activeTab === "generator"}
+                onClick={() => setActiveTab("generator")}
+              />
+              <SidebarItem
+                icon={<Zap className="w-[18px] h-[18px]" />}
+                label="Automations"
+                active={activeTab === "automations"}
+                onClick={() => setActiveTab("automations")}
+              />
+              <SidebarItem
+                icon={<TrendingUp className="w-[18px] h-[18px]" />}
+                label="Reports"
+                active={activeTab === "reports"}
+                onClick={() => setActiveTab("reports")}
+              />
+            </nav>
+
+            <div className="mt-6 pt-6 border-t border-[#18181b]/5">
+              <SidebarItem
+                icon={<Settings className="w-[18px] h-[18px]" />}
+                label="Settings"
+                active={activeTab === "settings"}
+                onClick={() => setActiveTab("settings")}
+              />
+              <Link href="/">
+                <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-[#18181b]/60 hover:bg-white hover:text-[#18181b] transition-all cursor-pointer mt-1">
+                  <Home className="w-[18px] h-[18px]" />
+                  <span>Back to Home</span>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </aside>
+
+        {/* Content Area */}
+        <div className="flex-1 p-6 overflow-y-auto bg-white">
+          <div className="max-w-7xl mx-auto space-y-6">
+            {/* Page Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h1 className="text-2xl font-semibold text-[#18181b] mb-1">
+                  {activeTab === "overview"
+                    ? "Marketing Dashboard"
+                    : activeTab === "generator"
+                      ? "AI Ad Generator"
+                      : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+                </h1>
+                <p className="text-[#18181b]/60 text-sm">
+                  {activeTab === "overview"
+                    ? "Welcome back! Here's your marketing performance overview."
+                    : activeTab === "generator"
+                      ? "Create stunning ad creatives with AI"
+                      : `Manage your ${activeTab} settings and data.`}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowDatePicker(!showDatePicker)}
+                    className="bg-white border-[#18181b]/10 text-[#18181b] hover:bg-[#f4f4f5] h-10 px-4"
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {dateRange}
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                  {showDatePicker && (
+                    <div className="absolute right-0 top-12 w-48 bg-white rounded-xl border border-[#18181b]/10 shadow-xl z-50 py-2">
+                      {["Last 7 days", "Last 30 days", "Last 90 days", "This year", "Custom range"].map((range) => (
+                        <button
+                          key={range}
+                          onClick={() => {
+                            setDateRange(range)
+                            setShowDatePicker(false)
+                          }}
+                          className={`w-full px-4 py-2 text-left text-sm hover:bg-[#f4f4f5] transition-colors ${dateRange === range ? "text-[#f97316] font-medium" : "text-[#18181b]/70"}`}
+                        >
+                          {range}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-white border-[#18181b]/10 text-[#18181b] hover:bg-[#f4f4f5] h-10 px-4"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export
+                </Button>
+                <Button size="sm" className="bg-[#f97316] hover:bg-[#ea580c] text-white h-10 px-4">
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Campaign
+                </Button>
+              </div>
+            </div>
+
+            {renderContent()}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Sidebar Item Component
+function SidebarItem({
+  icon,
+  label,
+  active,
+  onClick,
+  badge,
+  badgeColor,
+  dot,
+}: {
+  icon: React.ReactNode
+  label: string
+  active?: boolean
+  onClick?: () => void
+  badge?: string
+  badgeColor?: string
+  dot?: string
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all ${active ? "bg-[#fff7ed] text-[#f97316] font-medium" : "text-[#18181b]/60 hover:bg-white hover:text-[#18181b]"}`}
+    >
+      {icon}
+      <span className="flex-1 text-left">{label}</span>
+      {badge && (
+        <span
+          className={`px-2 py-0.5 rounded-full text-xs font-medium ${badgeColor || "bg-[#18181b]/10 text-[#18181b]"} ${badgeColor ? "text-white" : ""}`}
+        >
+          {badge}
+        </span>
+      )}
+      {dot && <span className={`w-2 h-2 rounded-full ${dot}`} />}
+    </button>
+  )
+}
+
+// KPI Card Component
+function KPICard({
+  label,
+  value,
+  change,
+  trend,
+  icon,
+  color,
+}: { label: string; value: string; change: string; trend: string; icon: React.ReactNode; color: string }) {
+  return (
+    <div className="bg-white border border-[#18181b]/5 rounded-2xl p-5 hover:shadow-lg hover:border-[#f97316]/20 transition-all">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[#18181b]/60 text-sm">{label}</span>
+        <div className={`w-10 h-10 rounded-xl bg-[#fff7ed] flex items-center justify-center ${color}`}>{icon}</div>
+      </div>
+      <div className="flex items-end justify-between">
+        <p className="text-2xl font-semibold text-[#18181b]">{value}</p>
+        <span
+          className={`text-sm font-medium flex items-center gap-0.5 ${trend === "up" ? "text-emerald-600" : trend === "down" ? "text-red-500" : "text-[#18181b]/50"}`}
+        >
+          {trend === "up" ? (
+            <ArrowUpRight className="w-4 h-4" />
+          ) : trend === "down" ? (
+            <ArrowDownRight className="w-4 h-4" />
+          ) : null}
+          {change}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+// Overview Content Component
+function OverviewContent({
+  performanceData,
+  channelData,
+  recentCampaigns,
+  topProducts,
+  aiInsights,
+  trendData,
+}: {
+  performanceData: any[]
+  channelData: any[]
+  recentCampaigns: any[]
+  topProducts: any[]
+  aiInsights: any[]
+  trendData: any[]
+}) {
+  return (
+    <>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KPICard
+          label="Total Ad Spend"
+          value="$24,580"
+          change="+12.5%"
+          trend="up"
+          icon={<DollarSign className="w-5 h-5" />}
+          color="text-[#f97316]"
+        />
+        <KPICard
+          label="Total Revenue"
+          value="$98,420"
+          change="+18.2%"
+          trend="up"
+          icon={<TrendingUp className="w-5 h-5" />}
+          color="text-emerald-600"
+        />
+        <KPICard
+          label="Overall ROAS"
+          value="4.0x"
+          change="+0.3x"
+          trend="up"
+          icon={<Target className="w-5 h-5" />}
+          color="text-blue-600"
+        />
+        <KPICard
+          label="Conversions"
+          value="2,847"
+          change="+24.1%"
+          trend="up"
+          icon={<MousePointer className="w-5 h-5" />}
+          color="text-violet-600"
+        />
+      </div>
+
+      {/* AI Insights Banner */}
+      <div className="bg-gradient-to-r from-[#f97316] to-[#ea580c] rounded-2xl p-6 text-white">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Sparkles className="w-6 h-6" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-medium mb-1">AI Co-Pilot Insight</h3>
+            <p className="text-white/80 text-sm leading-relaxed">
+              Your Meta Ads campaign "Summer Sale" is outperforming by 24%. Consider increasing budget by $500 to
+              maximize conversions during peak hours.
+            </p>
+          </div>
+          <Button size="sm" className="bg-white text-[#f97316] hover:bg-white/90 flex-shrink-0">
+            Apply Suggestion
+          </Button>
+        </div>
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Revenue Chart */}
+        <div className="lg:col-span-2 bg-white border border-[#18181b]/5 rounded-2xl p-6 hover:shadow-lg transition-all">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-[#18181b] font-medium">Revenue by Channel</h3>
+              <p className="text-sm text-[#18181b]/50">Monthly performance breakdown</p>
+            </div>
+            <div className="flex items-center gap-4 text-xs">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 bg-[#f97316] rounded-full" /> Meta
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full" /> Google
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 bg-violet-500 rounded-full" /> Shopify
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 bg-blue-500 rounded-full" /> LinkedIn
+              </span>
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={performanceData} barGap={2}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
+              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: "#71717a", fontSize: 12 }} />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#71717a", fontSize: 12 }}
+                tickFormatter={(v) => `$${v / 1000}k`}
+              />
+              <Tooltip
+                contentStyle={{
+                  borderRadius: "12px",
+                  border: "1px solid #e4e4e7",
+                  boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
+                }}
+              />
+              <Bar dataKey="metaAds" fill="#f97316" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="googleAds" fill="#10b981" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="shopify" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="linkedin" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Channel Mix */}
+        <div className="bg-white border border-[#18181b]/5 rounded-2xl p-6 hover:shadow-lg transition-all">
+          <div className="mb-6">
+            <h3 className="text-[#18181b] font-medium">Channel Mix</h3>
+            <p className="text-sm text-[#18181b]/50">Revenue distribution</p>
+          </div>
+          <ResponsiveContainer width="100%" height={180}>
+            <PieChart>
+              <Pie
+                data={channelData}
+                cx="50%"
+                cy="50%"
+                innerRadius={50}
+                outerRadius={80}
+                paddingAngle={3}
+                dataKey="value"
+              >
+                {channelData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip contentStyle={{ borderRadius: "12px", border: "1px solid #e4e4e7" }} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="space-y-2 mt-4">
+            {channelData.map((item, i) => (
+              <div key={i} className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                  <span className="text-[#18181b]/60">{item.name}</span>
+                </span>
+                <span className="font-medium text-[#18181b]">{item.value}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Trend Chart */}
+      <div className="bg-white border border-[#18181b]/5 rounded-2xl p-6 hover:shadow-lg transition-all">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-[#18181b] font-medium">Weekly Performance Trend</h3>
+            <p className="text-sm text-[#18181b]/50">Revenue vs Ad Spend</p>
+          </div>
+        </div>
+        <ResponsiveContainer width="100%" height={200}>
+          <AreaChart data={trendData}>
+            <defs>
+              <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#f97316" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="colorSpend" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
+            <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: "#71717a", fontSize: 12 }} />
+            <YAxis axisLine={false} tickLine={false} tick={{ fill: "#71717a", fontSize: 12 }} />
+            <Tooltip contentStyle={{ borderRadius: "12px", border: "1px solid #e4e4e7" }} />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke="#f97316"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorValue)"
+            />
+            <Area
+              type="monotone"
+              dataKey="spend"
+              stroke="#3b82f6"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorSpend)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Recent Campaigns & Top Products */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Campaigns */}
+        <div className="bg-white border border-[#18181b]/5 rounded-2xl p-6 hover:shadow-lg transition-all">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-[#18181b] font-medium">Active Campaigns</h3>
+              <p className="text-sm text-[#18181b]/50">Your top performing campaigns</p>
+            </div>
+            <Button variant="ghost" size="sm" className="text-[#f97316] hover:text-[#ea580c] hover:bg-[#fff7ed]">
+              View All
+            </Button>
+          </div>
+          <div className="space-y-3">
+            {recentCampaigns.slice(0, 4).map((campaign) => (
+              <div
+                key={campaign.id}
+                className="flex items-center justify-between p-3 rounded-xl hover:bg-[#fafafa] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-2 h-2 rounded-full ${campaign.status === "active" ? "bg-emerald-500" : campaign.status === "paused" ? "bg-amber-500" : "bg-blue-500"}`}
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-[#18181b]">{campaign.name}</p>
+                    <p className="text-xs text-[#18181b]/50">{campaign.channel}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-[#18181b]">{campaign.roas}</p>
+                  <p className="text-xs text-[#18181b]/50">{campaign.spend}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Top Products */}
+        <div className="bg-white border border-[#18181b]/5 rounded-2xl p-6 hover:shadow-lg transition-all">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-[#18181b] font-medium">Top Products</h3>
+              <p className="text-sm text-[#18181b]/50">Best sellers from Shopify</p>
+            </div>
+            <Button variant="ghost" size="sm" className="text-[#f97316] hover:text-[#ea580c] hover:bg-[#fff7ed]">
+              View All
+            </Button>
+          </div>
+          <div className="space-y-3">
+            {topProducts.map((product, idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-between p-3 rounded-xl hover:bg-[#fafafa] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#f4f4f5] rounded-xl flex items-center justify-center text-sm font-medium text-[#18181b]/60">
+                    {idx + 1}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-[#18181b]">{product.name}</p>
+                    <p className="text-xs text-[#18181b]/50">{product.orders} orders</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-[#18181b]">{product.revenue}</p>
+                  <p className="text-xs text-emerald-600">{product.growth}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+// Analytics View Component
+function AnalyticsView({
+  performanceData,
+  trendData,
+  channelData,
+}: { performanceData: any[]; trendData: any[]; channelData: any[] }) {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white border border-[#18181b]/5 rounded-2xl p-6">
+          <h3 className="text-[#18181b] font-medium mb-6">Revenue Trend</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={performanceData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
+              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: "#71717a", fontSize: 12 }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fill: "#71717a", fontSize: 12 }} />
+              <Tooltip contentStyle={{ borderRadius: "12px", border: "1px solid #e4e4e7" }} />
+              <Line type="monotone" dataKey="metaAds" stroke="#f97316" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="googleAds" stroke="#10b981" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="shopify" stroke="#8b5cf6" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="linkedin" stroke="#3b82f6" strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="bg-white border border-[#18181b]/5 rounded-2xl p-6">
+          <h3 className="text-[#18181b] font-medium mb-6">Channel Performance</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={channelData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                paddingAngle={3}
+                dataKey="value"
+                label={({ name, value }) => `${name}: ${value}%`}
+              >
+                {channelData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip contentStyle={{ borderRadius: "12px", border: "1px solid #e4e4e7" }} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Campaigns View Component
+function CampaignsView({ campaigns }: { campaigns: any[] }) {
+  return (
+    <div className="bg-white border border-[#18181b]/5 rounded-2xl overflow-hidden">
+      <div className="p-6 border-b border-[#18181b]/5">
+        <div className="flex items-center justify-between">
+          <h3 className="text-[#18181b] font-medium">All Campaigns</h3>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="border-[#18181b]/10 bg-transparent">
+              <Filter className="w-4 h-4 mr-2" />
+              Filter
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-[#fafafa]">
+            <tr>
+              <th className="text-left text-xs font-medium text-[#18181b]/60 px-6 py-3">Campaign</th>
+              <th className="text-left text-xs font-medium text-[#18181b]/60 px-6 py-3">Channel</th>
+              <th className="text-left text-xs font-medium text-[#18181b]/60 px-6 py-3">Status</th>
+              <th className="text-left text-xs font-medium text-[#18181b]/60 px-6 py-3">Spend</th>
+              <th className="text-left text-xs font-medium text-[#18181b]/60 px-6 py-3">ROAS</th>
+              <th className="text-left text-xs font-medium text-[#18181b]/60 px-6 py-3">Impressions</th>
+              <th className="text-left text-xs font-medium text-[#18181b]/60 px-6 py-3">Clicks</th>
+              <th className="text-left text-xs font-medium text-[#18181b]/60 px-6 py-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {campaigns.map((campaign) => (
+              <tr key={campaign.id} className="border-t border-[#18181b]/5 hover:bg-[#fafafa] transition-colors">
+                <td className="px-6 py-4">
+                  <span className="font-medium text-[#18181b]">{campaign.name}</span>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-[#18181b]/70">{campaign.channel}</span>
+                </td>
+                <td className="px-6 py-4">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${campaign.status === "active" ? "bg-emerald-100 text-emerald-700" : campaign.status === "paused" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"}`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${campaign.status === "active" ? "bg-emerald-500" : campaign.status === "paused" ? "bg-amber-500" : "bg-blue-500"}`}
+                    />
+                    {campaign.status}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-[#18181b]">{campaign.spend}</span>
+                </td>
+                <td className="px-6 py-4">
+                  <span
+                    className={`text-sm font-medium ${campaign.trend === "up" ? "text-emerald-600" : campaign.trend === "down" ? "text-red-500" : "text-[#18181b]/50"}`}
+                  >
+                    {campaign.roas}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-[#18181b]/70">{campaign.impressions}</span>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-[#18181b]/70">{campaign.clicks}</span>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <button className="p-1.5 hover:bg-[#f4f4f5] rounded-lg transition-colors">
+                      <Eye className="w-4 h-4 text-[#18181b]/60" />
+                    </button>
+                    <button className="p-1.5 hover:bg-[#f4f4f5] rounded-lg transition-colors">
+                      {campaign.status === "active" ? (
+                        <Pause className="w-4 h-4 text-[#18181b]/60" />
+                      ) : (
+                        <Play className="w-4 h-4 text-[#18181b]/60" />
+                      )}
+                    </button>
+                    <button className="p-1.5 hover:bg-[#f4f4f5] rounded-lg transition-colors">
+                      <MoreHorizontal className="w-4 h-4 text-[#18181b]/60" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+// AI Co-Pilot View Component
+function CopilotView({ insights }: { insights: any[] }) {
+  const [message, setMessage] = useState("")
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2 bg-white border border-[#18181b]/5 rounded-2xl flex flex-col h-[600px]">
+        <div className="p-6 border-b border-[#18181b]/5">
+          <h3 className="text-[#18181b] font-medium">AI Co-Pilot Chat</h3>
+          <p className="text-sm text-[#18181b]/50">Ask questions about your marketing data</p>
+        </div>
+        <div className="flex-1 p-6 overflow-y-auto space-y-4">
+          <div className="flex gap-3">
+            <div className="w-8 h-8 rounded-full bg-[#f97316] flex items-center justify-center flex-shrink-0">
+              <Sparkles className="w-4 h-4 text-white" />
+            </div>
+            <div className="bg-[#fafafa] rounded-2xl rounded-tl-none p-4 max-w-[80%]">
+              <p className="text-sm text-[#18181b]">
+                Hello! I'm your AI Co-Pilot. I can help you analyze your marketing data, suggest optimizations, and
+                answer questions about your campaigns. What would you like to know?
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4 border-t border-[#18181b]/5">
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Ask about your campaigns..."
+              className="flex-1 px-4 py-3 bg-[#fafafa] rounded-xl border border-[#18181b]/5 focus:border-[#f97316]/30 focus:outline-none text-sm"
+            />
+            <Button size="sm" className="bg-[#f97316] hover:bg-[#ea580c] text-white h-11 px-4">
+              <Send className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className="space-y-4">
+        <h3 className="text-[#18181b] font-medium">Recent Insights</h3>
+        {insights.map((insight, idx) => (
+          <div
+            key={idx}
+            className={`p-4 rounded-xl border ${insight.type === "success" ? "bg-emerald-50 border-emerald-200" : insight.type === "warning" ? "bg-amber-50 border-amber-200" : "bg-blue-50 border-blue-200"}`}
+          >
+            <div className="flex items-start gap-3">
+              {insight.type === "success" ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+              ) : insight.type === "warning" ? (
+                <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+              ) : (
+                <Clock className="w-5 h-5 text-blue-600 flex-shrink-0" />
+              )}
+              <div className="flex-1">
+                <p className="text-sm font-medium text-[#18181b]">{insight.title}</p>
+                <p className="text-xs text-[#18181b]/60 mt-1">{insight.message}</p>
+                <Button size="sm" variant="ghost" className="mt-2 h-7 text-xs">
+                  {insight.action}
+                </Button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// AI Ad Generator View Component
+function AdGeneratorView() {
+  const [prompt, setPrompt] = useState("")
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="bg-white border border-[#18181b]/5 rounded-2xl p-6">
+        <h3 className="text-[#18181b] font-medium mb-4">Generate Ad Creative</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm text-[#18181b]/70 mb-2">Product/Service</label>
+            <input
+              type="text"
+              placeholder="e.g., Premium Wireless Headphones"
+              className="w-full px-4 py-3 bg-[#fafafa] rounded-xl border border-[#18181b]/5 focus:border-[#f97316]/30 focus:outline-none text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-[#18181b]/70 mb-2">Target Audience</label>
+            <input
+              type="text"
+              placeholder="e.g., Young professionals, tech enthusiasts"
+              className="w-full px-4 py-3 bg-[#fafafa] rounded-xl border border-[#18181b]/5 focus:border-[#f97316]/30 focus:outline-none text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-[#18181b]/70 mb-2">Ad Type</label>
+            <div className="grid grid-cols-3 gap-2">
+              {["Image Ad", "Video Ad", "Carousel"].map((type) => (
+                <button
+                  key={type}
+                  className="px-4 py-2 rounded-xl border border-[#18181b]/10 text-sm hover:border-[#f97316] hover:bg-[#fff7ed] transition-all"
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm text-[#18181b]/70 mb-2">Additional Instructions</label>
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe the style, tone, or specific elements you want..."
+              className="w-full px-4 py-3 bg-[#fafafa] rounded-xl border border-[#18181b]/5 focus:border-[#f97316]/30 focus:outline-none text-sm h-24 resize-none"
+            />
+          </div>
+          <Button className="w-full bg-[#f97316] hover:bg-[#ea580c] text-white">
+            <Wand2 className="w-4 h-4 mr-2" />
+            Generate Creative
+          </Button>
+        </div>
+      </div>
+      <div className="bg-white border border-[#18181b]/5 rounded-2xl p-6">
+        <h3 className="text-[#18181b] font-medium mb-4">Preview</h3>
+        <div className="aspect-square bg-[#fafafa] rounded-xl flex items-center justify-center border-2 border-dashed border-[#18181b]/10">
+          <div className="text-center">
+            <ImageIcon className="w-12 h-12 text-[#18181b]/20 mx-auto mb-3" />
+            <p className="text-sm text-[#18181b]/40">Your generated ad will appear here</p>
+          </div>
+        </div>
+        <div className="mt-4 space-y-3">
+          <div className="p-4 bg-[#fafafa] rounded-xl">
+            <p className="text-xs text-[#18181b]/50 mb-1">Headline</p>
+            <p className="text-sm text-[#18181b]/40 italic">Generated headline will appear here...</p>
+          </div>
+          <div className="p-4 bg-[#fafafa] rounded-xl">
+            <p className="text-xs text-[#18181b]/50 mb-1">Description</p>
+            <p className="text-sm text-[#18181b]/40 italic">Generated description will appear here...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Channel View Component
+function ChannelView({ channel }: { channel: string }) {
+  const channelInfo = integrations.find((i) => i.key === channel) || { name: channel, logo: "" }
+  return (
+    <div className="space-y-6">
+      <div className="bg-white border border-[#18181b]/5 rounded-2xl p-6">
+        <div className="flex items-center gap-4 mb-6">
+          {channelInfo.logo && (
+            <Image
+              src={channelInfo.logo || "/placeholder.svg"}
+              alt={channelInfo.name}
+              width={48}
+              height={48}
+              className="rounded-xl"
+            />
+          )}
+          <div>
+            <h3 className="text-xl font-medium text-[#18181b]">{channelInfo.name}</h3>
+            <p className="text-sm text-[#18181b]/50">Connected and syncing</p>
+          </div>
+          <div className="ml-auto flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full" /> Active
+            </span>
+            <Button variant="outline" size="sm">
+              Sync Now
+            </Button>
+          </div>
+        </div>
+        <div className="grid grid-cols-4 gap-4">
+          <div className="p-4 bg-[#fafafa] rounded-xl">
+            <p className="text-xs text-[#18181b]/50 mb-1">Spend</p>
+            <p className="text-xl font-semibold text-[#18181b]">$8,420</p>
+          </div>
+          <div className="p-4 bg-[#fafafa] rounded-xl">
+            <p className="text-xs text-[#18181b]/50 mb-1">Revenue</p>
+            <p className="text-xl font-semibold text-emerald-600">$34,450</p>
+          </div>
+          <div className="p-4 bg-[#fafafa] rounded-xl">
+            <p className="text-xs text-[#18181b]/50 mb-1">ROAS</p>
+            <p className="text-xl font-semibold text-[#f97316]">4.1x</p>
+          </div>
+          <div className="p-4 bg-[#fafafa] rounded-xl">
+            <p className="text-xs text-[#18181b]/50 mb-1">Conversions</p>
+            <p className="text-xl font-semibold text-[#18181b]">892</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Automations View Component
+function AutomationsView() {
+  const automations = [
+    {
+      name: "Budget Alert",
+      description: "Notify when daily spend exceeds $500",
+      status: "active",
+      trigger: "Spend > $500",
+    },
+    {
+      name: "Low ROAS Alert",
+      description: "Pause campaigns with ROAS below 1.5x",
+      status: "active",
+      trigger: "ROAS < 1.5x",
+    },
+    {
+      name: "Weekly Report",
+      description: "Send performance report every Monday",
+      status: "active",
+      trigger: "Every Monday 9 AM",
+    },
+  ]
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-[#18181b] font-medium">Your Automations</h3>
+          <p className="text-sm text-[#18181b]/50">Set up rules to automate your marketing tasks</p>
+        </div>
+        <Button className="bg-[#f97316] hover:bg-[#ea580c] text-white">
+          <Plus className="w-4 h-4 mr-2" />
+          Create Automation
+        </Button>
+      </div>
+      <div className="space-y-4">
+        {automations.map((automation, idx) => (
+          <div key={idx} className="bg-white border border-[#18181b]/5 rounded-2xl p-6 hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-[#fff7ed] rounded-xl flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-[#f97316]" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-[#18181b]">{automation.name}</h4>
+                  <p className="text-sm text-[#18181b]/50">{automation.description}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-[#18181b]/50">{automation.trigger}</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
+                  Active
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Reports View Component
+function ReportsView() {
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-[#18181b] font-medium">Reports</h3>
+          <p className="text-sm text-[#18181b]/50">Generate and schedule marketing reports</p>
+        </div>
+        <Button className="bg-[#f97316] hover:bg-[#ea580c] text-white">
+          <Plus className="w-4 h-4 mr-2" />
+          New Report
+        </Button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[
+          "Weekly Performance",
+          "Monthly Summary",
+          "Campaign Analysis",
+          "Channel Comparison",
+          "ROI Report",
+          "Custom Report",
+        ].map((report, idx) => (
+          <div
+            key={idx}
+            className="bg-white border border-[#18181b]/5 rounded-2xl p-6 hover:shadow-lg hover:border-[#f97316]/20 transition-all cursor-pointer"
+          >
+            <div className="w-12 h-12 bg-[#fff7ed] rounded-xl flex items-center justify-center mb-4">
+              <FileText className="w-6 h-6 text-[#f97316]" />
+            </div>
+            <h4 className="font-medium text-[#18181b] mb-1">{report}</h4>
+            <p className="text-sm text-[#18181b]/50">Click to generate</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Settings View Component
+function SettingsView() {
+  return (
+    <div className="max-w-2xl space-y-6">
+      <div className="bg-white border border-[#18181b]/5 rounded-2xl p-6">
+        <h3 className="text-[#18181b] font-medium mb-6">Account Settings</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm text-[#18181b]/70 mb-2">Company Name</label>
+            <input
+              type="text"
+              defaultValue="GROWZZY Demo"
+              className="w-full px-4 py-3 bg-[#fafafa] rounded-xl border border-[#18181b]/5 focus:border-[#f97316]/30 focus:outline-none text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-[#18181b]/70 mb-2">Email</label>
+            <input
+              type="email"
+              defaultValue="demo@growzzy.io"
+              className="w-full px-4 py-3 bg-[#fafafa] rounded-xl border border-[#18181b]/5 focus:border-[#f97316]/30 focus:outline-none text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-[#18181b]/70 mb-2">Timezone</label>
+            <select className="w-full px-4 py-3 bg-[#fafafa] rounded-xl border border-[#18181b]/5 focus:border-[#f97316]/30 focus:outline-none text-sm">
+              <option>UTC-8 (Pacific Time)</option>
+              <option>UTC-5 (Eastern Time)</option>
+              <option>UTC+0 (GMT)</option>
+            </select>
+          </div>
+          <Button className="bg-[#f97316] hover:bg-[#ea580c] text-white">Save Changes</Button>
+        </div>
+      </div>
+      <div className="bg-white border border-[#18181b]/5 rounded-2xl p-6">
+        <h3 className="text-[#18181b] font-medium mb-6">Connected Integrations</h3>
+        <div className="space-y-3">
+          {integrations.map((integration) => (
+            <div key={integration.key} className="flex items-center justify-between p-4 bg-[#fafafa] rounded-xl">
+              <div className="flex items-center gap-3">
+                <Image
+                  src={integration.logo || "/placeholder.svg"}
+                  alt={integration.name}
+                  width={32}
+                  height={32}
+                  className="rounded-lg"
+                />
+                <span className="font-medium text-[#18181b]">{integration.name}</span>
+              </div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
+                Connected
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
