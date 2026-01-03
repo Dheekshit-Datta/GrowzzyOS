@@ -1,0 +1,31 @@
+// Updated KPI data to match image
+const kpiData = [
+  {
+    title: 'Total Spend',
+    value: ',580',
+    change: '+12%',
+    trend: 'up',
+    description: 'vs last period'
+  },
+  {
+    title: 'Revenue',
+    value: ',420',
+    change: '+24%',
+    trend: 'up',
+    description: 'vs last period'
+  },
+  {
+    title: 'ROAS',
+    value: '3.52x',
+    change: '+18%',
+    trend: 'up',
+    description: 'vs last period'
+  },
+  {
+    title: 'Conversions',
+    value: '1,842',
+    change: '+8%',
+    trend: 'up',
+    description: 'vs last period'
+  }
+];
